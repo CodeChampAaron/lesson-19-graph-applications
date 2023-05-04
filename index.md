@@ -1,4 +1,4 @@
-# Graph Application Site
+# Olden Empires
 
 **CISC320 Spring 2023 Lesson 14 - Graph Applications**
 
@@ -6,7 +6,7 @@ Group Members:
 * First member aoster@udel.edu
 * Second member adtrunzo@udel.edu
 * Third member farhanto@udel.edu
-* Fourth member ajsilva@udel.edu
+* Fourth member asilva@udel.edu
 
 Description of project
 
@@ -452,15 +452,15 @@ MysteryShack - WitchHut
 
 
 # Breadth First Medieval Kingdom
-BFS on Graph to Determine Shortest Path Between Vertices In 
+BFS on Graph to Determine the Distances from Locations (Nodes) from the Castle (Source Node) in a 
 Medieval Kingdom.
 
 **Informal Description**: 
-Takes a graph and determines the shortest path between two vertices. 
+King Arthur and the Knights of the Round Table needs to build walls in their kingdom in prepartion for the upcoming attack by the Green Knight and his army of green knights, and they want to build stroger walls the closer to the castle. For locations that are closer to the castle, the walls are going to be bigger and stronger, in case the opposing knights invade their kingdom. The locations at a distance of 1 from the castle will have the tallest/strongest walls, the locations at a distance of 2 will have the second strongest walls, and so on. 
 
 > **Formal Description**:
 >  * Input: G(V, E): Graph of Vertices and Edges
->  * Output: Int: Shortest Path Between a Given Location and the Starting Location
+>  * Output: List: Nodes at the specified distances from the starting node 
 
 **Graph Problem/Algorithm**: [BFS]
 Breadth First Search
@@ -471,8 +471,10 @@ Breadth First Search
 import networkx as nx
 import matplotlib.pyplot as plt
 
+#Define Graph G
 G = nx.Graph() 
 
+#Add nodes
 G.add_node("Castle") 
 G.add_node("Village")
 G.add_node("TownSquare") 
@@ -493,14 +495,16 @@ G.add_node("Dungeon")
 G.add_node("Keep") 
 G.add_node("WatchTower") 
 G.add_node("MagicForest") 
+G.add_node("JoustingGrounds") 
 
+#Add edges
 G.add_edge("Castle", "Village")
 G.add_edge("TownSquare", "Village")
 G.add_edge("Castle", "TownSquare")
 G.add_edge("Abbey", "Market")
 G.add_edge("TownSquare", "Abbey")
-G.add_edge("Castle", "Monastary")
-G.add_edge("TradingPost", "FarmersMarket")
+G.add_edge("Castle", "GreatHall")
+G.add_edge("TradingPost", "Market")
 G.add_edge("Church", "Monastery")
 G.add_edge("Courtyard", "Church")
 G.add_edge("Church", "Cathedral")
@@ -513,73 +517,89 @@ G.add_edge("GreatHall", "Blacksmith")
 G.add_edge("Courtyard", "Armory")
 G.add_edge("GreatHall", "Courtyard")
 G.add_edge("Keep", "Dungeon")
-G.add_edge("MagicForest", "WatchTower")
+G.add_edge("WatchTower", "MagicForest")
 G.add_edge("Dungeon", "MagicForest")
+G.add_edge("Monastery", "Keep")
+G.add_edge("Blacksmith", "Church")
+G.add_edge("Manor", "Cathedral")
+G.add_edge("Market", "Tavern")
+G.add_edge("Abbey", "Tavern")
+G.add_edge("TownSquare", "TradingPost")
+G.add_edge("Cathedral", "Monastery")
+G.add_edge("TownSquare", "Courtyard")
+G.add_edge("Manor", "Tavern")
+G.add_edge("Abbey", "Keep")
+G.add_edge("Manor", "Keep")
+G.add_edge("Tavern", "Keep")
+G.add_edge("Castle", "Farmstead")
+G.add_edge("Tavern", "JoustingGrounds")
+G.add_edge("JoustingGrounds", "Dungeon")
+G.add_edge("Village", "Abbey")
+G.add_edge("TradingPost", "JoustingGrounds")
+G.add_edge("GreatHall", "Armory")
+G.add_edge("Armory", "Manor")
+G.add_edge("Keep", "WatchTower")
+G.add_edge("Mill", "Monastery")
+G.add_edge("Village", "Cathedral")
+G.add_edge("Market", "JoustingGrounds")
+G.add_edge("Farmstead", "Village")
+G.add_edge("JoustingGrounds", "WatchTower")
+G.add_edge("Blacksmith", "Cathedral")
+G.add_edge("Tavern", "Monastery")
 
 nx.draw(G,node_color = "red",with_labels=True, node_size= 300 )
 ```
 
 **Visualization**:
-![Image goes here](BFS.png)
+![Image goes here](BFSdense.png)
 
 **Solution code:**
 
 ```python
-import networkx as nx
-import matplotlib.pyplot as plt
 
-G = nx.Graph() 
+# Perform BFS starting from nodes at a distance of 1, going to nodes at a distance of 5
+bfs_medieval_edges1 = nx.descendants_at_distance(G, source="Castle", distance=1)
+bfs_medieval_edges2 = nx.descendants_at_distance(G, source="Castle", distance=2)
+bfs_medieval_edges3 = nx.descendants_at_distance(G, source="Castle", distance=3)
+bfs_medieval_edges4 = nx.descendants_at_distance(G, source="Castle", distance=4)
+bfs_medieval_edges5 = nx.descendants_at_distance(G, source="Castle", distance=5)
 
-G.add_node("Castle") 
-G.add_node("Village")
-G.add_node("TownSquare") 
-G.add_node("Market") 
-G.add_node("Abbey") 
-G.add_node("Monastery")
-G.add_node("Cathedral") 
-G.add_node("Church") 
-G.add_node("Manor") 
-G.add_node("Farmstead") 
-G.add_node("Mill") 
-G.add_node("Tavern") 
-G.add_node("Blacksmith") 
-G.add_node("Armory") 
-G.add_node("Courtyard") 
-G.add_node("GreatHall") 
-G.add_node("Dungeon") 
-G.add_node("Keep") 
-G.add_node("WatchTower") 
-G.add_node("MagicForest") 
+# Print the edges in the BFS forest
+print("Distance: 1")
+print(bfs_medieval_edges1)
 
-G.add_edge("Castle", "Village")
-G.add_edge("TownSquare", "Village")
-G.add_edge("Castle", "TownSquare")
-G.add_edge("Abbey", "Market")
-G.add_edge("TownSquare", "Abbey")
-G.add_edge("Castle", "Monastary")
-G.add_edge("TradingPost", "FarmersMarket")
-G.add_edge("Church", "Monastery")
-G.add_edge("Courtyard", "Church")
-G.add_edge("Church", "Cathedral")
-G.add_edge("Courtyard", "Manor")
-G.add_edge("Farmstead", "Mill")
-G.add_edge("Mill", "Manor")
-G.add_edge("Courtyard", "Tavern")
-G.add_edge("Armory", "Blacksmith")
-G.add_edge("GreatHall", "Blacksmith")
-G.add_edge("Courtyard", "Armory")
-G.add_edge("GreatHall", "Courtyard")
-G.add_edge("Keep", "Dungeon")
-G.add_edge("MagicForest", "WatchTower")
-G.add_edge("Dungeon", "MagicForest")
+print("Distance: 2")
+print(bfs_medieval_edges2)
 
-nx.draw(G,node_color = "red",with_labels=True, node_size= 300 )
-print(nx.number_connected_components(G))
+print("Distance: 3")
+print(bfs_medieval_edges3)
 
+print("Distance: 4")
+print(bfs_medieval_edges4)
+
+print("Distance: 5")
+print(bfs_medieval_edges5)
 ```
 
 **Output**
+#Shows the distance of every node from the starting source (Castle)
+
+Distance: 1
+{'TownSquare', 'GreatHall', 'Farmstead', 'Village'}
+
+Distance: 2
+{'Courtyard', 'Cathedral', 'Blacksmith', 'Abbey', 'Mill', 'Armory', 'TradingPost'}
+
+Distance: 3
+{'Keep', 'Monastery', 'Church', 'JoustingGrounds', 'Tavern', 'Market', 'Manor'}
+
+Distance: 4
+{'Dungeon', 'WatchTower'}
+
+Distance: 5
+{'MagicForest'}
 
 **Interpretation of Results**:
-
-TEST TEST TEST 
+The output of this code gives us the distances with the associated nodes from the starting source. 
+This means that the nodes {'TownSquare', 'GreatHall', 'Farmstead', 'Village'} are at a distance of 1
+from the Castle, meaning that they should have the most fortified walls. The nodes {'Courtyard', 'Cathedral', 'Blacksmith', 'Abbey', 'Mill', 'Armory', 'TradingPost'} have a distance of 2 from the castle, so they will have the second most foritfied walls. The Node {'MagicForest} is the furthest away from the castle, and will have the least fortified walls compared to the rest of the nodes in the Kingdom. 
